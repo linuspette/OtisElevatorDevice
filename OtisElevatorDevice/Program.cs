@@ -1,17 +1,46 @@
 ﻿using OtisElevatorDevice.Models;
+using OtisElevatorDevice.Services;
+
 
 namespace OtisElevatorDevice
 {
     class Program
     {
 
-        List<ElevatorReturnData> returnDataHistory = new List<ElevatorReturnData>();
+        DeviceManager device = new DeviceManager();
+
+        private readonly List
+       
+
+
+
+        public void Initialize()
+        {
 
 
 
 
 
-        //initialize connection osv osv
+
+        }
+
+
+
+
+
+
+
+
+
+
 
     }
+
+
 }
+
+
+
+
+
+
