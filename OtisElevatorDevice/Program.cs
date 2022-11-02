@@ -1,17 +1,6 @@
 ﻿using OtisElevatorDevice.Models;
-
-namespace OtisElevatorDevice
-{
-    class Program
-    {
-
-        List<ElevatorReturnData> returnDataHistory = new List<ElevatorReturnData>();
+using OtisElevatorDevice.Services;
 
 
+var device = new DeviceManager();
 
-
-
-        //initialize connection osv osv
-
-    }
-}
