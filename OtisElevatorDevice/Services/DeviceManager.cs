@@ -18,7 +18,7 @@ namespace OtisElevatorDevice.Services
             ElevatorStates elevatorStatus = GenerateElevatorStatus(previousState);
             ElevatorReturnData returnData = new ElevatorReturnData
             {
-                Id = 0,
+                Id = "0",
                 ElevatorStatus = elevatorStatus.ToString(),
                 ElevatorPosition = GeneratePosition(topFloor, elevatorStatus).ToString(),
 
