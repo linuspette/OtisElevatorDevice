@@ -14,9 +14,8 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
 
 
-- script: dotnet test <ElevatorDeviceTests> --logger trx
-- task: PublishTestResults@2
-  condition: succeededOrFailed()
+- task: DotNetCoreCLI@2
   inputs:
-    testRunner: VSTest
-    testResultsFiles: '**/*.trx'
+    command: test
+    projects: '**/*Tests/*.csproj'
+    arguments: '--configuration $(buildConfiguration)'
