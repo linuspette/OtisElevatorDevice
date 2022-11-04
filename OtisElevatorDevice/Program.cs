@@ -22,13 +22,14 @@ class Program
         //kopplar eventuellt inte upp och lägger inte till items mot api! --fixa!
         //timer för att köra igenom alla hissar och uppdatera twins med nya data!
 
+        AddElevators();
+        Console.ReadKey();
+        //await InitializeAsync();
 
-       await InitializeAsync();
-
-        foreach (var item in elevatorListItems)
-        {
-            Console.WriteLine(item.Id.ToString());
-        }
+        // foreach (var item in elevatorListItems)
+        // {
+        //     Console.WriteLine(item.Id.ToString());
+        // }
     }
     public static async Task InitializeAsync()
     {
@@ -77,18 +78,21 @@ class Program
 
     public static async void AddElevators()
     {
-        
-        using var http = new HttpClient();
 
-        await http.PostAsJsonAsync("https://otisagileapi.azurewebsites.net/api/Elevators/add", new
+        using (var http = new HttpClient()) 
         {
 
-            Id = Guid.NewGuid().ToString(),
-            Location = "IN THE SHAFT"
+            var result = await http.PostAsJsonAsync("https://otisagileapi.azurewebsites.net/api/Elevators/add", new
+            {
+
+                id = Guid.NewGuid().ToString(),
+                location = "IN THE SHAFT"
 
 
-        });
-       
+            });
+
+        }
+        
     }
 
 
