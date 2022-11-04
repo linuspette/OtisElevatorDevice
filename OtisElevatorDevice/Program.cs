@@ -1,2 +1,6 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using OtisElevatorDevice.Models;
+using OtisElevatorDevice.Services;
+
+
+var device = new DeviceManager();
+
