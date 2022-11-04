@@ -9,9 +9,9 @@ namespace OtisElevatorDevice
 
         DeviceManager device = new DeviceManager();
 
-        private readonly List
+        private readonly List<ElevatorListItem> list = new List<ElevatorListItem>();
        
-
+        
 
 
         public void Initialize()
@@ -23,15 +23,6 @@ namespace OtisElevatorDevice
 
 
         }
-
-
-
-
-
-
-
-
-
 
 
     }
