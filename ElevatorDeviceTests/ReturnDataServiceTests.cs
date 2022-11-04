@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 
 
-namespace ElevatorDeviceTests.Services
+namespace ElevatorDeviceTests
 {
 
     public class ReturnDataServiceTests
@@ -38,9 +38,9 @@ namespace ElevatorDeviceTests.Services
         {
             int topFloor = 5;
             var status = ElevatorStates.GoingToFloor;
-            var result = _sut.GeneratePosition(topFloor,  status);
+            var result = _sut.GeneratePosition(topFloor, status);
             //Assert.IsType<int>(result);
-            Assert.InRange<int>(result, 0, topFloor); 
+            Assert.InRange(result, 0, topFloor);
         }
 
         [Fact]
