@@ -2,36 +2,21 @@
 using OtisElevatorDevice.Services;
 
 
-namespace OtisElevatorDevice
+namespace OtisElevatorDevice;
+
+
+class Program
 {
-    class Program
+    static void Main()
     {
 
-        DeviceManager device = new DeviceManager();
-
-        private readonly List<ElevatorListItem> list = new List<ElevatorListItem>();
-       
-        
-
-
-        public void Initialize()
-        {
 
 
 
-
-
-
-        }
 
 
     }
 
-
 }
 
-
-
-
-
-
+     

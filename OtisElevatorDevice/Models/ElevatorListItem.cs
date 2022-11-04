@@ -9,8 +9,8 @@ namespace OtisElevatorDevice.Models
     internal class ElevatorListItem
     {
 
-        public string Id { get; set; }
-        public string Name { get; set; }  = null;
+        public string? Id { get; set; } = null;
+        public string? Name { get; set; }  = null;
 
 
     }
