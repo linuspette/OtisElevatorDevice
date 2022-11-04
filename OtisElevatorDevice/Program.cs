@@ -17,88 +17,112 @@ class Program
     public static List<ElevatorListItem> elevatorListItems = new List<ElevatorListItem>();
 
 
-    public static async Task Main()
+    public static void Main()
     {
         //kopplar eventuellt inte upp och lägger inte till items mot api! --fixa!
         //timer för att köra igenom alla hissar och uppdatera twins med nya data!
 
-        AddElevators();
-        Console.ReadKey();
+        //Task.Run(async ()=> await AddElevators());
+
+        //var result = AddElevators().ConfigureAwait(false);
+
+        Initialize();
+
         //await InitializeAsync();
 
         // foreach (var item in elevatorListItems)
         // {
         //     Console.WriteLine(item.Id.ToString());
         // }
-    }
-    public static async Task InitializeAsync()
-    {
 
-        var deviceList = await GetElevatorListItems();
-        if(deviceList.Count == 0)
+        async void Initialize()
         {
-            for (int i = 0; i < 100; i++)
-            {
-                AddElevators();
-            }
 
+            await AddElevators();
         }
-        else
+
+
+        async Task <List<ElevatorListItem>> GetElevatorListItems()
         {
-            foreach (var item in deviceList)
+
+            List<ElevatorListItem> elevatorListItems = new List<ElevatorListItem>();
+            try
             {
-                elevatorListItems.Add(item);
+                using var http = new HttpClient();
+
+                var result = await http.GetAsync("https://otisagileapi.azurewebsites.net/api/Elevators/getelevators/100");
+                IEnumerable<ElevatorListItem> returnList = (IEnumerable<ElevatorListItem>)JsonConvert.DeserializeObject<ElevatorListItem>(await result.Content.ReadAsStringAsync());
+                if (returnList != null)
+                {
+                    foreach (var item in returnList)
+                    {
+                        elevatorListItems.Add(item);
+                    }
+                }
             }
+            catch { }
+            return elevatorListItems.ToList();
         }
-    }
 
 
-    public static async Task<List<ElevatorListItem>> GetElevatorListItems()
-    {
-
-        List<ElevatorListItem> elevatorListItems = new List<ElevatorListItem>();
-        try
+        async Task AddElevators()
         {
-            using var http = new HttpClient();
 
-            var result = await http.GetAsync("https://otisagileapi.azurewebsites.net/api/Elevators/getelevators/100");
-            IEnumerable<ElevatorListItem> returnList = (IEnumerable<ElevatorListItem>)JsonConvert.DeserializeObject<ElevatorListItem>(await result.Content.ReadAsStringAsync());
-            if (returnList != null)
+            var client = new HttpClient();
+
+            client.BaseAddress = new Uri("https://otisagileapi.azurewebsites.net/api/");
+            try
             {
-                foreach (var item in returnList)
+                var result = await client.PostAsJsonAsync("elevators/add", new
+                {
+
+                    id = Guid.NewGuid().ToString(),
+                    location = "IN THE SHAFT"
+
+
+                });
+
+
+                Console.WriteLine(await result.Content.ReadAsStringAsync());
+            }
+            catch { Console.WriteLine("Do not want!"); }
+
+            
+            Console.ReadKey();
+        }
+
+        async Task InitializeAsync()
+        {
+
+            var deviceList = await GetElevatorListItems();
+            if (deviceList.Count == 0)
+            {
+                for (int i = 0; i < 100; i++)
+                {
+                    await AddElevators();
+                }
+
+            }
+            else
+            {
+                foreach (var item in deviceList)
                 {
                     elevatorListItems.Add(item);
                 }
             }
         }
-        catch { }
-        return elevatorListItems;
     }
+    
 
 
-    public static async void AddElevators()
-    {
-
-        using (var http = new HttpClient()) 
-        {
-
-            var result = await http.PostAsJsonAsync("https://otisagileapi.azurewebsites.net/api/Elevators/add", new
-            {
-
-                id = Guid.NewGuid().ToString(),
-                location = "IN THE SHAFT"
-
-
-            });
-
-        }
+    
         
-    }
-
-
-
-
 }
+
+
+
+
+
 
 
 
