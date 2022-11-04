@@ -80,7 +80,7 @@ class Program
         
         using var http = new HttpClient();
 
-        await http.PostAsJsonAsync("https://otisagileapi.azurewebsites.net/api/Elevators/add", new ElevatorListItem
+        await http.PostAsJsonAsync("https://otisagileapi.azurewebsites.net/api/Elevators/add", new
         {
 
             Id = Guid.NewGuid().ToString(),
