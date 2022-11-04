@@ -16,5 +16,5 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: test
-    projects: '**/OtisElevatorDevice.ElevatorDeviceTests/*.csproj'
+    projects: '**/OtisElevatorDevice.ElevatorDeviceTests/*Tests*.csproj'
     arguments: '--configuration $(buildConfiguration)'
