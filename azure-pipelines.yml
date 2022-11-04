@@ -14,7 +14,7 @@ steps:
   displayName: 'dotnet build $(buildConfiguration)'
 
 
-- script: dotnet test <ElevatorDeviceTests> --logger trx
+- script: dotnet test <test-project> --logger trx
 - task: PublishTestResults@2
   condition: succeededOrFailed()
   inputs:
