@@ -11,7 +11,7 @@ namespace OtisElevatorDevice.Models
 
         public string? Id { get; set; } = null;
         public string? Location { get; set; }  = null;
-
+        public string? DeviceConnectionString { get; set; } = null;
 
     }
 }
