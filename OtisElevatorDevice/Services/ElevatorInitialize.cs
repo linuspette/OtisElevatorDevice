@@ -1,4 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Azure.Devices.Client;
+using Microsoft.Azure.Devices.Shared;
+using Newtonsoft.Json;
 using OtisElevatorDevice.Enums;
 using OtisElevatorDevice.Models;
 using System;
@@ -90,18 +93,48 @@ namespace OtisElevatorDevice.Services
             {
                 foreach (var item in elevatorListItems)
                 {
-                    
+                    if(item != null)
+                    {
                     Random random = new Random();
                     int topFloor = random.Next(0, 10);
-                    ElevatorReturnData returnUpdate = new ElevatorReturnData();
-                    
+                    ElevatorReturnData returnUpdate = new ElevatorReturnData();                   
                     returnUpdate = deviceManager.GenerateData(ElevatorStates.GoingToFloor, topFloor, item);
 
+                    if(item.DeviceConnectionString != null)
+                        {
+                            using var _deviceClient = DeviceClient.CreateFromConnectionString(item.DeviceConnectionString);
+
+                            var twin = await _deviceClient.GetTwinAsync();
+                            if (twin != null)
+                            {
+                                TwinCollection reported = new TwinCollection();
+
+                                reported["ElevatorStatus"] = returnUpdate.ElevatorStatus;
+                                reported["ElevatorPosition"] = returnUpdate.ElevatorPosition;
+                                reported["ElevatorDoorStatus"] = returnUpdate.ElevatorDoorStatus;
+
+                                await _deviceClient.UpdateReportedPropertiesAsync(reported);
+                            }
+
+                        }
+                    
 
 
-
+                    };
+                    
 
                 }
+            }
+
+        }
+
+        public async Task LoopUpdates()
+        {
+            while(elevatorListItems.Count != 0) 
+            {
+                await UpdateElevatorTwins();
+                Task.Delay(20000);
+            
             }
 
         }
