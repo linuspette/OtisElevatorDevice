@@ -12,13 +12,13 @@ namespace OtisElevatorDevice.Services
     {
         List<ElevatorReturnData> returnData = new List<ElevatorReturnData>();
 
-        public ElevatorReturnData GenerateData(ElevatorStates previousState, int topFloor)
+        public ElevatorReturnData GenerateData(ElevatorStates previousState, int topFloor, ElevatorListItem elevator)
         {
 
             ElevatorStates elevatorStatus = GenerateElevatorStatus(previousState);
             ElevatorReturnData returnData = new ElevatorReturnData
             {
-                Id = "0",
+                Id = elevator.Id,
                 ElevatorStatus = elevatorStatus.ToString(),
                 ElevatorPosition = GeneratePosition(topFloor, elevatorStatus).ToString(),
 

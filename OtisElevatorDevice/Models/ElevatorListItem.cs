@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace OtisElevatorDevice.Models
 {
-    internal class ElevatorListItem
+    public class ElevatorListItem
     {
 
         public string? Id { get; set; } = null;

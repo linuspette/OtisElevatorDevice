@@ -25,8 +25,13 @@ namespace ElevatorDeviceTests
         {
             int topFloor = 5;
             var status = ElevatorStates.GoingToFloor;
+            ElevatorListItem item = new()
+            {
+                Id = "0",
+                Location = "9"
+            };
 
-            var result = _sut.GenerateData(status, topFloor);
+            var result = _sut.GenerateData(status, topFloor, item);
 
             Assert.IsType<ElevatorReturnData>(result);
         }
