@@ -20,7 +20,7 @@ namespace OtisElevatorDevice.Services
         public void Initialize()
         {
             InitializeAsync().ConfigureAwait(false);
-
+            UpdateElevatorTwinsAsync().ConfigureAwait(false);
         }
 
         async Task<List<ElevatorListItem>> GetElevatorListItems()
@@ -32,8 +32,8 @@ namespace OtisElevatorDevice.Services
             {
                 using var http = new HttpClient();
 
-                var result = await http.GetAsync("https://otisagileapi.azurewebsites.net/api/Elevators/getelevators/100");
-                IEnumerable<ElevatorListItem> returnList = (IEnumerable<ElevatorListItem>)JsonConvert.DeserializeObject<ElevatorListItem>(await result.Content.ReadAsStringAsync());
+                IEnumerable<ElevatorListItem> returnList = await http.GetFromJsonAsync<IEnumerable<ElevatorListItem>>("https://otisagileapi.azurewebsites.net/api/Elevators/getelevators/?take=10");
+
                 if (returnList != null)
                 {
                     foreach (var item in returnList)
@@ -75,19 +75,19 @@ namespace OtisElevatorDevice.Services
         {
 
             elevatorListItems = await GetElevatorListItems();
-            if (elevatorListItems.Count < 10)
+            if (elevatorListItems.Count < 20)
             {
-                int count = 10 - elevatorListItems.Count;
+                int count = 20 - elevatorListItems.Count;
                 for (int i = 0; i < count; i++)
                 {
                     await AddElevators();
                 }
 
             }
-            
+            Task.Delay(5000).Wait();
         }
 
-        async Task UpdateElevatorTwins()
+        async Task UpdateElevatorTwinsAsync()
         {
             if(elevatorListItems.Count != 0)
             {
@@ -115,6 +115,7 @@ namespace OtisElevatorDevice.Services
 
                                 await _deviceClient.UpdateReportedPropertiesAsync(reported);
                             }
+                            Console.WriteLine(returnUpdate.ElevatorStatus.ToString());
 
                         }
                     
@@ -132,7 +133,7 @@ namespace OtisElevatorDevice.Services
         {
             while(elevatorListItems.Count != 0) 
             {
-                await UpdateElevatorTwins();
+                await UpdateElevatorTwinsAsync();
                 Task.Delay(20000);
             
             }
