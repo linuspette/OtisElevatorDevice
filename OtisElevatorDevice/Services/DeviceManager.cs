@@ -52,6 +52,7 @@ namespace OtisElevatorDevice.Services
             return status;
         }
 
+        
 
 
         public int GeneratePosition(int topFloor, ElevatorStates status)

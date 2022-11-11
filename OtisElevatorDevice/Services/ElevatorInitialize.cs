@@ -20,14 +20,13 @@ namespace OtisElevatorDevice.Services
         public void Initialize()
         {
             InitializeAsync().ConfigureAwait(false);
-            UpdateElevatorTwinsAsync().ConfigureAwait(false);
+
         }
 
         async Task<List<ElevatorListItem>> GetElevatorListItems()
         {
             List<ElevatorListItem> elevatorList = new List<ElevatorListItem>();
 
-            List<ElevatorListItem> elevatorListItems = new List<ElevatorListItem>();
             try
             {
                 using var http = new HttpClient();
@@ -46,7 +45,6 @@ namespace OtisElevatorDevice.Services
             return elevatorList.ToList();
         }
 
-
         async Task AddElevators()
         {
 
@@ -61,12 +59,10 @@ namespace OtisElevatorDevice.Services
                     id = Guid.NewGuid().ToString(),
                     location = "IN THE SHAFT"
 
-
                 });
 
             }
             catch { Console.WriteLine("Do not want!"); }
-
 
             Console.ReadKey();
         }
@@ -82,19 +78,22 @@ namespace OtisElevatorDevice.Services
                 {
                     await AddElevators();
                 }
-
             }
-            Task.Delay(5000).Wait();
+            Task.Delay(2000).Wait();
+            await UpdateElevatorTwinsAsync();
         }
 
         async Task UpdateElevatorTwinsAsync()
         {
+
             if(elevatorListItems.Count != 0)
             {
                 foreach (var item in elevatorListItems)
                 {
                     if(item != null)
                     {
+                    using var http = new HttpClient();
+                    var device = await http.PostAsJsonAsync("https://otisfunctions.azurewebsites.net/api/ConnectDevice", new {deviceId = item.Id});
                     Random random = new Random();
                     int topFloor = random.Next(0, 10);
                     ElevatorReturnData returnUpdate = new ElevatorReturnData();                   
@@ -117,23 +116,16 @@ namespace OtisElevatorDevice.Services
                             }
                             Console.WriteLine(returnUpdate.ElevatorStatus.ToString());
 
-                        }
-                    
-
-
-                    };
-                    
-
+                        }                    
+                    };                   
                 }
             }
-
         }
 
         public async Task LoopUpdates()
         {
-            while(elevatorListItems.Count != 0) 
+            while(elevatorListItems.Count > 0) 
             {
-                await UpdateElevatorTwinsAsync();
                 Task.Delay(20000);
             
             }
