@@ -93,7 +93,10 @@ namespace OtisElevatorDevice.Services
                     if(item != null)
                     {
                     using var http = new HttpClient();
-                    var device = await http.PostAsJsonAsync("https://otisfunctions.azurewebsites.net/api/ConnectDevice", new {deviceId = item.Id});
+
+                    var deviceConnectionString = await http.PostAsJsonAsync("https://otisfunctions.azurewebsites.net/api/ConnectDevice", new {deviceId = item.Id});
+                    var result = await deviceConnectionString.Content.ReadAsStringAsync();
+                    item.DeviceConnectionString = result.ToString();
                     Random random = new Random();
                     int topFloor = random.Next(0, 10);
                     ElevatorReturnData returnUpdate = new ElevatorReturnData();                   
