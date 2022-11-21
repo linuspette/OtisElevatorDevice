@@ -1,15 +1,10 @@
-﻿using Microsoft.Azure.Amqp.Framing;
-using Microsoft.Azure.Devices.Client;
+﻿using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
 using OtisElevatorDevice.Enums;
 using OtisElevatorDevice.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace OtisElevatorDevice.Services
 {
@@ -79,32 +74,33 @@ namespace OtisElevatorDevice.Services
                     await AddElevators();
                 }
             }
-            Task.Delay(2000).Wait();
+            await Task.Delay(2000);
             await UpdateElevatorTwinsAsync();
+            await SendDataAsync();
         }
 
         async Task UpdateElevatorTwinsAsync()
         {
 
-            if(elevatorListItems.Count != 0)
+            if (elevatorListItems.Count != 0)
             {
                 foreach (var item in elevatorListItems)
                 {
-                    if(item != null)
+                    if (item != null)
                     {
-                    using var http = new HttpClient();
+                        using var http = new HttpClient();
 
-                    var deviceConnectionString = await http.PostAsJsonAsync("https://otisfunctions.azurewebsites.net/api/ConnectDevice", new {deviceId = item.Id});
-                    var result = await deviceConnectionString.Content.ReadAsStringAsync();
-                    item.DeviceConnectionString = result.ToString();
-                    Random random = new Random();
-                    int topFloor = random.Next(0, 10);
-                    ElevatorReturnData returnUpdate = new ElevatorReturnData();                   
-                    returnUpdate = deviceManager.GenerateData(ElevatorStates.GoingToFloor, topFloor, item);
+                        var deviceConnectionString = await http.PostAsJsonAsync("https://otisfunctions.azurewebsites.net/api/devices/connect", new { deviceId = item.Id });
+                        var result = await deviceConnectionString.Content.ReadAsStringAsync();
+                        item.DeviceConnectionString = result.ToString();
+                        Random random = new Random();
+                        int topFloor = random.Next(0, 10);
+                        ElevatorReturnData returnUpdate = new ElevatorReturnData();
+                        returnUpdate = deviceManager.GenerateData(ElevatorStates.GoingToFloor, topFloor, item);
 
-                    if(item.DeviceConnectionString != null)
+                        if (item.DeviceConnectionString != null)
                         {
-                            using var _deviceClient = DeviceClient.CreateFromConnectionString(item.DeviceConnectionString);
+                            await using var _deviceClient = DeviceClient.CreateFromConnectionString(item.DeviceConnectionString);
 
                             var twin = await _deviceClient.GetTwinAsync();
                             if (twin != null)
@@ -119,20 +115,42 @@ namespace OtisElevatorDevice.Services
                             }
                             Console.WriteLine(returnUpdate.ElevatorStatus.ToString());
 
-                        }                    
-                    };                   
+                        }
+                    };
                 }
             }
         }
 
-        public async Task LoopUpdates()
+        async Task SendDataAsync()
         {
-            while(elevatorListItems.Count > 0) 
+            while (true)
             {
-                Task.Delay(20000);
-            
-            }
+                foreach (var elevator in elevatorListItems)
+                {
+                    if (elevator.DeviceConnectionString != null)
+                    {
+                        try
+                        {
+                            var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ElevatorDataPayload
+                            {
+                                DeviceId = elevator.Id!,
+                                DeviceName = "Otis Elevator 199",
+                                DeviceType = "Small elevator",
+                            })));
 
+                            await SendMessageAsync(elevator.DeviceConnectionString!, msg);
+                        }
+                        catch { }
+                    }
+                }
+                await Task.Delay(5000);
+            }
+        }
+
+        public async Task SendMessageAsync(string connectionString, Message data)
+        {
+            await using var _deviceClient = DeviceClient.CreateFromConnectionString(connectionString);
+            await _deviceClient.SendEventAsync(data);
         }
 
 
