@@ -134,8 +134,13 @@ namespace OtisElevatorDevice.Services
                             var msg = new Message(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(new ElevatorDataPayload
                             {
                                 DeviceId = elevator.Id!,
-                                DeviceName = "Otis Elevator 199",
-                                DeviceType = "Small elevator",
+                                Elevatorstatus = elevator.ElevatorStatus!,
+                                Elevatorposition = elevator.ElevatorPosition!,
+                                Elevatordoorstatus = elevator.ElevatorDoorStatus!,
+
+                                //DeviceName = "Otis Elevator 199",
+                                //DeviceType = "Small elevator",
+
                             })));
 
                             await SendMessageAsync(elevator.DeviceConnectionString!, msg);
