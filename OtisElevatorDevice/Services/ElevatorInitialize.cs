@@ -1,4 +1,5 @@
-﻿using Microsoft.Azure.Devices.Client;
+﻿using Microsoft.Azure.Amqp.Framing;
+using Microsoft.Azure.Devices.Client;
 using Microsoft.Azure.Devices.Shared;
 using Newtonsoft.Json;
 using OtisElevatorDevice.Enums;
@@ -150,6 +151,12 @@ namespace OtisElevatorDevice.Services
                 }
                 await Task.Delay(5000);
             }
+        }
+
+
+        public static async Task SetDirectMethodAsync()
+        {
+            await DeviceClient.SetMethodHandlerAsync("SendToNextFloor", Open, null);
         }
 
         public async Task SendMessageAsync(string connectionString, Message data)
